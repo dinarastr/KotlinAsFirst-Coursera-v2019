@@ -2,7 +2,12 @@
 
 package lesson3.task1
 
+import lesson1.task1.sqr
+import ru.spbstu.kotlin.generate.assume.retry
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
+import kotlin.math.pow
 
 /**
  * Пример
@@ -75,7 +80,19 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    var sum1 = 1
+    var sum2 = 1
+    var sum3 = 0
+    if (n == 1 || n == 2) return 1
+    else
+        for (m in 3..n) {
+            sum3 = sum1 + sum2
+            sum1 = sum2
+            sum2 = sum3
+        }
+    return sum3
+}
 
 /**
  * Простая
@@ -106,7 +123,16 @@ fun maxDivisor(n: Int): Int = TODO()
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = TODO()
+fun isCoPrime(m: Int, n: Int): Boolean {
+    val x = max(m, n)
+    val y = min(m, n)
+    if (x % 2 == 0 && y % 2 == 0) return false
+    else
+        for (i in 3..y.toDouble().toInt() step 2) {
+            if (x % i == 0 && y % i == 0) return false
+        }
+    return true
+}
 
 /**
  * Простая
@@ -133,7 +159,22 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int = TODO()
+fun collatzSteps(x: Int): Int {
+    var z = x
+    var steps = 0
+    if (z == 1) return 0
+    while (z > 1) {
+        if (z % 2 == 0) {
+            z /= 2
+            steps += 1
+        } else {
+            z = 3 * z + 1
+            steps += 1
+        }
+    }
+    return steps
+}
+
 
 /**
  * Средняя
@@ -207,4 +248,56 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+
+fun digNum(m: Int): Int {
+    var x = 0
+    var l = m
+    while (l > 0) {
+        x += 1
+        l /= 10
+    }
+    return x
+}
+
+
+fun fibSequenceDigit(n: Int): Int =
+    when (n) {
+        1, 2 -> 1
+        3 -> 2
+        4 -> 3
+        5 -> 5
+        6 -> 8
+        else -> {
+            var count = 6
+            var x = 0
+            for (i in 7..n) {
+                count += digNum(fib(i))
+                x = fib(i)
+                if (count >= n) break
+            }
+            if (count == n) x % 10 else {
+                for (i in 1..(count - n)) {
+                    x /= 10
+                }
+            }
+            x % 10
+        }
+    }
+
+fun fibMax(n: Int): Int {
+    var count = 6
+    var x = 0
+    for (i in 7..n) {
+        count += digNum(fib(i))
+        x = fib(i)
+        if (count >= n) break
+    }
+    return count
+}
+
+fun degree(n: Int, m: Int): Int {
+    var x = n
+    var y = 0
+    y = x % 10
+    return x
+}

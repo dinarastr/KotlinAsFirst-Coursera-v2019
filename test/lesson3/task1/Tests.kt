@@ -243,7 +243,24 @@ class Tests {
         assertEquals(1, fibSequenceDigit(2))
         assertEquals(3, fibSequenceDigit(4))
         assertEquals(2, fibSequenceDigit(9))
+        assertEquals(1, fibSequenceDigit(10))
         assertEquals(5, fibSequenceDigit(14))
         assertEquals(2, fibSequenceDigit(20))
     }
+
+    @Test
+    fun digNum() {
+        assertEquals(1, digNum(1))
+        assertEquals(1, digNum(2))
+        assertEquals(1, digNum(4))
+        assertEquals(1, digNum(9))
+        assertEquals(2, digNum(14))
+        assertEquals(3, digNum(200))
+    }
+
+    @Test
+    fun fibMax() {
+        assertEquals(19, fibMax(17))
+    }
+
 }
