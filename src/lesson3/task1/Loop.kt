@@ -294,10 +294,3 @@ fun fibMax(n: Int): Int {
     }
     return count
 }
-
-fun degree(n: Int, m: Int): Int {
-    var x = n
-    var y = 0
-    y = x % 10
-    return x
-}

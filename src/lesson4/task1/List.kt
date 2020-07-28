@@ -3,6 +3,9 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
+import lesson3.task1.isPrime
+import java.lang.IllegalStateException
 import kotlin.math.sqrt
 
 /**
@@ -115,14 +118,35 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>): Double {
+    var summa = 0.0
+    if (v.isEmpty()) return 0.0
+    else {
+        for (element in v) {
+            summa += sqr(element)
+        }
+    }
+    return sqrt(summa)
+}
 
 /**
  * Простая
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>): Double {
+    var average = 0.0
+    var number = 0
+
+    if (list.isEmpty()) return 0.0
+    else {
+        for (element in list) {
+            average += element
+            number += 1
+        }
+    }
+    return average / number
+}
 
 /**
  * Средняя
@@ -132,7 +156,19 @@ fun mean(list: List<Double>): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    var average = 0.0
+    var number = 0
+    for (element in list) {
+        average += element
+        number += 1
+    }
+
+    for (i in 0 until list.size) {
+        list[i] = list[i] - average / number
+    }
+    return list
+}
 
 /**
  * Средняя
@@ -141,7 +177,18 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Int>, b: List<Int>): Int = TODO()
+fun times(a: List<Int>, b: List<Int>): Int {
+    if (a.isEmpty() || b.isEmpty()) return 0
+    var list1 = a
+    var list2 = b
+    var final = mutableListOf<Int>()
+    for (i in list1.indices) {
+        final.add(list1[i] * list2[i])
+    }
+    return final.fold(0) { previousResult, element ->
+        previousResult + element
+    }
+}
 
 /**
  * Средняя
@@ -181,7 +228,29 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String {
+    var x = n
+    var z = 0
+    var list = mutableListOf<Int>()
+    while (x >= 2) {
+        z = maxDivider(x)
+        list.add(z)
+        x /= z
+    }
+    return list.sorted().joinToString(separator = "*")
+}
+
+
+
+fun maxDivider(n: Int): Int {
+    var x = n
+    for (i in 2..n) {
+        if (n % i == 0 && isPrime(i))
+            x = i
+    }
+    return x
+}
+
 
 /**
  * Средняя

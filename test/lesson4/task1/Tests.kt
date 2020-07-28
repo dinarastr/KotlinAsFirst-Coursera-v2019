@@ -179,6 +179,16 @@ class Tests {
     }
 
     @Test
+    fun maxDivider() {
+        assertEquals(2, maxDivider(2))
+        assertEquals(5, maxDivider(75))
+        assertEquals(19, maxDivider(342))
+        assertEquals(151, maxDivider(1073676289))
+        assertEquals(1073676287, maxDivider(1073676287))
+    }
+
+
+    @Test
     @Tag("Normal")
     fun convert() {
         assertEquals(listOf(1), convert(1, 2))
