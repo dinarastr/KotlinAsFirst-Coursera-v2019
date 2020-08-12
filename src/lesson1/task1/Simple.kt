@@ -45,12 +45,15 @@ fun quadraticRootProduct(a: Double, b: Double, c: Double): Double {
     return x1 * x2 // Результат
 }
 
+
+class Square(val column: Int, val row: Int)
+
 /**
  * Пример главной функции
  */
 fun main() {
-    val result = sqr(7)
-    println("result = $result")
+    val first = Square(3, 6)
+    println(first)
 }
 
 /**

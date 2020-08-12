@@ -3,10 +3,9 @@
 package lesson8.task1
 
 import lesson1.task1.sqr
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import lesson2.task2.pointInsideCircle
+import java.lang.IllegalArgumentException
+import kotlin.math.*
 
 /**
  * Точка на плоскости
@@ -79,14 +78,18 @@ data class Circle(val center: Point, val radius: Double) {
      * расстояние между их центрами минус сумма их радиусов.
      * Расстояние между пересекающимися окружностями считать равным 0.0.
      */
-    fun distance(other: Circle): Double = TODO()
+    fun distance(other: Circle): Double {
+        val distance = center.distance(other.center) - radius - other.radius
+        return if (distance > 0) distance else 0.0
+    }
 
     /**
      * Тривиальная
      *
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
-    fun contains(p: Point): Boolean = TODO()
+    fun contains(p: Point): Boolean =
+        sqr(p.x - center.x) + sqr(p.y - center.y) <= sqr(radius)
 }
 
 /**
@@ -106,7 +109,34 @@ data class Segment(val begin: Point, val end: Point) {
  * Дано множество точек. Вернуть отрезок, соединяющий две наиболее удалённые из них.
  * Если в множестве менее двух точек, бросить IllegalArgumentException
  */
-fun diameter(vararg points: Point): Segment = TODO()
+fun throwException() {
+    throw IllegalArgumentException("Not enough points")
+}
+
+fun diameter(vararg points: Point): Segment {
+    var segmentsAndLengths = mutableMapOf<Double, Segment>()
+    var segments = mutableSetOf<Segment>()
+    var lengths = mutableListOf<Double>()
+    var newSetOfPoints = mutableSetOf<Point>()
+    for (point in points) {
+        newSetOfPoints.add(point)
+    }
+    return try {
+        for (point in newSetOfPoints) {
+            for (point1 in (newSetOfPoints - point)) {
+                segments.add(Segment(point, point1))
+            }
+        }
+        for (segment in segments) {
+            segmentsAndLengths[segment.begin.distance(segment.end)] = segment
+            lengths.add(segment.begin.distance(segment.end))
+        }
+        var longestSegment = lengths.max() ?: 0.0
+        segmentsAndLengths[longestSegment] ?: Segment(Point(0.0, 0.0), Point(0.0, 0.0))
+    } catch (e: IllegalArgumentException) {
+        Segment(Point(0.0, 0.0), Point(0.0, 0.0))
+    }
+}
 
 /**
  * Простая
@@ -114,7 +144,11 @@ fun diameter(vararg points: Point): Segment = TODO()
  * Построить окружность по её диаметру, заданному двумя точками
  * Центр её должен находиться посередине между точками, а радиус составлять половину расстояния между ними
  */
-fun circleByDiameter(diameter: Segment): Circle = TODO()
+fun circleByDiameter(diameter: Segment): Circle {
+    var radius = diameter.begin.distance(diameter.end) / 2
+    var center = Point((diameter.begin.x + diameter.end.x) / 2, (diameter.begin.y + diameter.end.y) / 2)
+    return Circle(center, radius)
+}
 
 /**
  * Прямая, заданная точкой point и углом наклона angle (в радианах) по отношению к оси X.
@@ -153,21 +187,36 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = TODO()
+fun lineBySegment(s: Segment): Line {
+    val start = Point(s.begin.x, s.begin.y)
+    val lowerSide = abs(s.end.x - s.begin.x)
+    val angle = acos(lowerSide / s.begin.distance(s.end))
+    return Line(start, angle)
+}
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
+fun lineByPoints(a: Point, b: Point): Line {
+    val lowerSide = abs(a.x - b.x)
+    val angle = acos(lowerSide / a.distance(b))
+    return Line(a, angle)
+}
 
 /**
  * Сложная
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
-fun bisectorByPoints(a: Point, b: Point): Line = TODO()
+fun bisectorByPoints(a: Point, b: Point): Line {
+    val point = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
+    val lowerSide = abs(a.x - b.x)
+    val angle1 = acos(lowerSide / a.distance(b))
+    val angle = PI / 2 - angle1
+    return Line(point, angle)
+}
 
 /**
  * Средняя

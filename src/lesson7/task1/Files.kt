@@ -53,8 +53,33 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val output = mutableMapOf<String, Int>()
+    for (line in File(inputName).readLines()) {
+        for (string in substrings) {
+            var count = 0
+            count += howManyWords(line.split(" "), string)
+            output[string] = count + (output[string] ?: 0)
+        }
+    }
+    return output
+}
 
+fun howManyWords(str: List<String>, substring: String): Int {
+    if (substring.isEmpty()) return 0
+    var count = 0
+    val substringLowerCase = substring.toLowerCase()
+    for (word in str) {
+        var test = word.toLowerCase()
+        while (test.isNotEmpty()) {
+            if (substringLowerCase in test) {
+                count++
+            } else break
+            test = test.substring(test.indexOf(substringLowerCase) + 1, test.length)
+        }
+    }
+    return count
+}
 
 /**
  * Средняя
@@ -121,9 +146,80 @@ fun centerFile(inputName: String, outputName: String) {
  * 7) В самой длинной строке каждая пара соседних слов должна быть отделена В ТОЧНОСТИ одним пробелом
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
+@ExperimentalStdlibApi
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    var maxLineLength = 0
+    var listOfLineLengths = mutableListOf<Int>()
+    for (line in File(inputName).readLines()) {
+        var splitLine = line.trim().split(" ")
+        var lineJoined = splitLine.joinToString(" ")
+        listOfLineLengths.add(lineJoined.length)
+    }
+    maxLineLength = listOfLineLengths.max() ?: 0
+
+    for (line in File(inputName).readLines()) {
+        if (line.isBlank()) {
+            outputStream.newLine()
+        }
+        var splitLine = line.trim().split(" ")
+        if (splitLine.size == 1) {
+            outputStream.write(splitLine[0])
+        } else {
+            var lastWord = splitLine.last()
+            var lineWithoutLast = splitLine.dropLast(1)
+            var spacesWeNeedToAdd = maxLineLength - numberOfCharsInList(splitLine)
+            var rawList = addSpace(lineWithoutLast, spacesWeNeedToAdd)
+            outputStream.newLine()
+            outputStream.write((rawList + lastWord).joinToString(""))
+        }
+    }
+    outputStream.close()
 }
+
+
+fun numberOfCharsInList(list: List<String>): Int {
+    var count = 0
+    for (word in list) {
+        count += word.length
+    }
+    return count
+}
+
+fun addEqualSpaces(list: List<String>, numberSpaces: Int): List<String> {
+    var newList = mutableListOf<String>()
+    for (word in list) {
+        var newWord = word
+        for (i in 1..numberSpaces) {
+            newWord = "$newWord "
+        }
+        newList.add(newWord)
+    }
+    return newList
+}
+
+fun addSpace(list: List<String>, spaces: Int): List<String> {
+    var newList = listOf<String>()
+    if (spaces % list.size == 0) {
+        var spaceForWord = spaces / list.size
+        newList = addEqualSpaces(list, spaceForWord)
+    } else {
+        var spaceForWord = spaces / list.size
+        var remainder = spaces % list.size
+        newList = addEqualSpaces(list, spaceForWord)
+        var middle = mutableListOf<String>()
+        var current = 0
+        for (word in newList) {
+            var newWord = word
+            current++
+            if (current <= remainder) newWord += " "
+            middle.add(newWord)
+        }
+        newList = middle
+    }
+    return newList
+}
+
 
 /**
  * Средняя
@@ -244,15 +340,15 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * Соответствующий выходной файл:
 <html>
-    <body>
-        <p>
-            Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
-            Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
-        </p>
-        <p>
-            Suspendisse <s>et elit in enim tempus iaculis</s>.
-        </p>
-    </body>
+<body>
+<p>
+Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
+Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
+</p>
+<p>
+Suspendisse <s>et elit in enim tempus iaculis</s>.
+</p>
+</body>
 </html>
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -295,67 +391,67 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  *
  * Пример входного файла:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
-* Утка по-пекински
-    * Утка
-    * Соус
-* Салат Оливье
-    1. Мясо
-        * Или колбаса
-    2. Майонез
-    3. Картофель
-    4. Что-то там ещё
-* Помидоры
-* Фрукты
-    1. Бананы
-    23. Яблоки
-        1. Красные
-        2. Зелёные
+ * Утка по-пекински
+ * Утка
+ * Соус
+ * Салат Оливье
+1. Мясо
+ * Или колбаса
+2. Майонез
+3. Картофель
+4. Что-то там ещё
+ * Помидоры
+ * Фрукты
+1. Бананы
+23. Яблоки
+1. Красные
+2. Зелёные
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  *
  *
  * Соответствующий выходной файл:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
 <html>
-  <body>
-    <ul>
-      <li>
-        Утка по-пекински
-        <ul>
-          <li>Утка</li>
-          <li>Соус</li>
-        </ul>
-      </li>
-      <li>
-        Салат Оливье
-        <ol>
-          <li>Мясо
-            <ul>
-              <li>
-                  Или колбаса
-              </li>
-            </ul>
-          </li>
-          <li>Майонез</li>
-          <li>Картофель</li>
-          <li>Что-то там ещё</li>
-        </ol>
-      </li>
-      <li>Помидоры</li>
-      <li>
-        Фрукты
-        <ol>
-          <li>Бананы</li>
-          <li>
-            Яблоки
-            <ol>
-              <li>Красные</li>
-              <li>Зелёные</li>
-            </ol>
-          </li>
-        </ol>
-      </li>
-    </ul>
-  </body>
+<body>
+<ul>
+<li>
+Утка по-пекински
+<ul>
+<li>Утка</li>
+<li>Соус</li>
+</ul>
+</li>
+<li>
+Салат Оливье
+<ol>
+<li>Мясо
+<ul>
+<li>
+Или колбаса
+</li>
+</ul>
+</li>
+<li>Майонез</li>
+<li>Картофель</li>
+<li>Что-то там ещё</li>
+</ol>
+</li>
+<li>Помидоры</li>
+<li>
+Фрукты
+<ol>
+<li>Бананы</li>
+<li>
+Яблоки
+<ol>
+<li>Красные</li>
+<li>Зелёные</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</body>
 </html>
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -382,23 +478,23 @@ fun markdownToHtml(inputName: String, outputName: String) {
  * Вывести в выходной файл процесс умножения столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 111):
-   19935
-*    111
+19935
+ *    111
 --------
-   19935
+19935
 + 19935
 +19935
 --------
- 2212785
+2212785
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  * Нули в множителе обрабатывать так же, как и остальные цифры:
-  235
-*  10
+235
+ *  10
 -----
-    0
+0
 +235
 -----
- 2350
+2350
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
@@ -412,16 +508,16 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Вывести в выходной файл процесс деления столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 22):
-  19935 | 22
- -198     906
- ----
-    13
-    -0
-    --
-    135
-   -132
-   ----
-      3
+19935 | 22
+-198     906
+----
+13
+-0
+--
+135
+-132
+----
+3
 
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *

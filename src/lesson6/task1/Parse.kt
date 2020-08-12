@@ -69,7 +69,34 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val parts = str.split(" ")
+    if (parts.size != 3) return ""
+    val x = parts[2].toInt()
+    var y = 0
+    val z = listOf(
+        "января",
+        "февраля",
+        "марта",
+        "апреля",
+        "мая",
+        "июня",
+        "июля",
+        "августа",
+        "сентября",
+        "октября",
+        "ноября",
+        "декабря"
+    )
+    if (parts[1] in z) y = z.indexOf(parts[1]) + 1
+    else return ""
+    val i = parts[0].toInt()
+    if (i in 32..0) return ""
+    if (parts[1] in "февраля, апреля, июня, сентября, ноября" && i > 30) return ""
+    if (parts[1] == z[1] && i > 28) return ""
+    if (parts[1] == z[1] && x % 4 == 0 && x % 100 == 0 && x % 400 == 0 && i > 29) return ""
+    return twoDigitStr(i) + "." + twoDigitStr(y) + "." + parts[2]
+}
 
 /**
  * Средняя
@@ -122,7 +149,23 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val x = jumps.split(" ")
+    if (x.size < 2) return -1
+    var numbers = listOf<String>()
+    var final = listOf<Int>()
+    var y = -1
+    for (i in x) {
+        y += 1
+        if ("+" in i) {
+            numbers += x[y - 1]
+        }
+    }
+    for (number in numbers) {
+        final += number.toInt()
+    }
+    return final.max() ?: return -1
+}
 
 /**
  * Сложная

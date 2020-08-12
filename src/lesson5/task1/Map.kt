@@ -91,7 +91,15 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
+fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
+    var diary = mutableMapOf<Int, MutableList<String>>()
+    for ((name, score) in grades) {
+        val list = diary[score] ?: mutableListOf()
+        list.add(name)
+        diary[score] = list
+    }
+    return diary
+}
 
 /**
  * Простая
@@ -103,7 +111,15 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+    for ((key, value) in a) {
+        if (key !in b) return false
+        else {
+            if (b[key] != a[key]) return false
+        }
+    }
+    return true
+}
 
 /**
  * Простая
@@ -119,7 +135,17 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
  *   subtractOf(a = mutableMapOf("a" to "z"), mapOf("a" to "z"))
  *     -> a changes to mutableMapOf() aka becomes empty
  */
-fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = TODO()
+fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
+    var x = mutableListOf<String>()
+    for ((key, value) in a) {
+        if (key in b && b[key] == a[key])
+            x.add(key)
+    }
+
+    for (key in x) {
+        a.remove(key)
+    }
+}
 
 /**
  * Простая
@@ -128,7 +154,17 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = TO
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
+    var x = mutableSetOf<String>()
+    var y = mutableListOf<String>()
+    for (name in a) {
+        if (name in b) x.add(name)
+    }
+    for (name in x) {
+        y.add(name)
+    }
+    return y
+}
 
 /**
  * Средняя
@@ -147,7 +183,25 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    var book = mutableMapOf<String, String>()
+    for ((name, phone) in mapA) {
+        book[name] = phone
+    }
+    for ((name, phone) in mapB) {
+        if (name in mapA && phone != mapA[name]) {
+            book[name] = mapA[name].plus(", ").plus(mapB[name])
+        }
+        if (name in mapA && phone == mapA[name]) {
+            continue
+        }
+        if (name !in mapA) {
+            book[name] = phone
+        }
+    }
+    return book
+}
+
 
 /**
  * Средняя
@@ -238,8 +292,28 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
-
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val x = mutableSetOf<String>()
+    val z = mutableSetOf<String>()
+    val y = mutableMapOf<String, Set<String>>()
+    for ((name, friend) in friends) {
+        x.add(name)
+        z.add(name)
+        for (f in friend) {
+            x.add(f)
+        }
+    }
+    for (name in x) {
+        if (name !in z) y[name] = setOf()
+        for ((i, j) in friends) {
+            val z = friends[name] ?: mutableSetOf()
+            if (name in j) {
+                y[i] = j.union(z) - i
+            }
+        }
+    }
+    return y
+}
 /**
  * Сложная
  *
