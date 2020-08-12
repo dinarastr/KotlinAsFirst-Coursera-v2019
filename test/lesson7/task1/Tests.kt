@@ -58,6 +58,28 @@ Basic, Ruby, Swift.
     }
 
     @Test
+    fun howManyWords() {
+        assertEquals(
+            3, howManyWords(listOf("мама", "мат"), "м")
+        )
+        assertEquals(
+            1, howManyWords(listOf("лес", "тополь"), "с")
+        )
+        assertEquals(
+            2, howManyWords(listOf("барабашка", "банк", "банкомат"), "банк")
+        )
+    }
+
+
+    @Test
+    fun addSpace() {
+        assertEquals(
+            listOf("мама  ", "мат  ", "мать  "), addSpace(listOf("мама", "мат", "мать"), 6)
+        )
+    }
+
+
+    @Test
     @Tag("Normal")
     fun countSubstrings() {
         assertEquals(
@@ -117,6 +139,7 @@ Basic, Ruby, Swift.
 
     }
 
+    @ExperimentalStdlibApi
     @Test
     @Tag("Hard")
     fun alignFileByWidth() {
