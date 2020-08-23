@@ -2,7 +2,8 @@
 
 package lesson1.task1
 
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.sqrt
 
 /**
  * Пример
@@ -52,7 +53,7 @@ class Square(val column: Int, val row: Int)
  * Пример главной функции
  */
 fun main() {
-    val first = Square(3, 6)
+    val first = Square(column = 3, row = 6)
     println(first)
 }
 

@@ -72,9 +72,10 @@ fun main() {
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
     if (parts.size != 3) return ""
-    val x = parts[2].toInt()
-    var y = 0
-    val z = listOf(
+    val year = parts[2].toIntOrNull() ?: return ""
+    val month = parts[1]
+    var indexOfMonth = 0
+    val listOfMonths = listOf(
         "января",
         "февраля",
         "марта",
@@ -88,14 +89,14 @@ fun dateStrToDigit(str: String): String {
         "ноября",
         "декабря"
     )
-    if (parts[1] in z) y = z.indexOf(parts[1]) + 1
+    if (month in listOfMonths) indexOfMonth = listOfMonths.indexOf(month) + 1
     else return ""
-    val i = parts[0].toInt()
-    if (i in 32..0) return ""
-    if (parts[1] in "февраля, апреля, июня, сентября, ноября" && i > 30) return ""
-    if (parts[1] == z[1] && i > 28) return ""
-    if (parts[1] == z[1] && x % 4 == 0 && x % 100 == 0 && x % 400 == 0 && i > 29) return ""
-    return twoDigitStr(i) + "." + twoDigitStr(y) + "." + parts[2]
+    val day = parts[0].toIntOrNull() ?: return ""
+    if (day in 32..0) return ""
+    if (month in "февраля, апреля, июня, сентября, ноября" && day > 30) return ""
+    if (month == listOfMonths[1] && day > 28) return ""
+    if (month == listOfMonths[1] && (year % 4 == 0 || year % 100 == 0 && year % 400 == 0 && day > 29)) return ""
+    return twoDigitStr(day) + "." + twoDigitStr(indexOfMonth) + "." + year
 }
 
 /**
@@ -150,21 +151,22 @@ fun bestLongJump(jumps: String): Int = TODO()
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    val x = jumps.split(" ")
-    if (x.size < 2) return -1
-    var numbers = listOf<String>()
-    var final = listOf<Int>()
-    var y = -1
-    for (i in x) {
-        y += 1
-        if ("+" in i) {
-            numbers += x[y - 1]
+    val heights = jumps.split(" ")
+    if (heights.size < 2) return -1
+    val numbers = mutableListOf<String>()
+    var maxJumpHeight = -1
+    var index = -1
+    for (height in heights) {
+        index += 1
+        if ("+" in height) {
+            numbers += heights[index - 1]
         }
     }
     for (number in numbers) {
-        final += number.toInt()
+        val numberValue = number.toIntOrNull() ?: return -1
+        maxJumpHeight = maxOf(maxJumpHeight, numberValue)
     }
-    return final.max() ?: return -1
+    return maxJumpHeight
 }
 
 /**

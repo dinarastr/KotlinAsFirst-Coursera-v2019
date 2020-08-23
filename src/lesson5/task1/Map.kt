@@ -114,9 +114,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((key, value) in a) {
         if (key !in b) return false
-        else {
-            if (b[key] != a[key]) return false
-        }
+        else if (b[key] != a[key]) return false
     }
     return true
 }
@@ -136,13 +134,13 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
-    var x = mutableListOf<String>()
-    for ((key, value) in a) {
+    var listOfStringsToBeDeleted = mutableListOf<String>()
+    for ((key, _) in a) {
         if (key in b && b[key] == a[key])
-            x.add(key)
+            listOfStringsToBeDeleted.add(key)
     }
 
-    for (key in x) {
+    for (key in listOfStringsToBeDeleted) {
         a.remove(key)
     }
 }
@@ -155,15 +153,11 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    var x = mutableSetOf<String>()
-    var y = mutableListOf<String>()
+    val firstListOfPeople = mutableSetOf<String>()
     for (name in a) {
-        if (name in b) x.add(name)
+        if (name !in firstListOfPeople && name in b) firstListOfPeople.add(name)
     }
-    for (name in x) {
-        y.add(name)
-    }
-    return y
+    return firstListOfPeople.toList()
 }
 
 /**
@@ -191,9 +185,6 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
     for ((name, phone) in mapB) {
         if (name in mapA && phone != mapA[name]) {
             book[name] = mapA[name].plus(", ").plus(mapB[name])
-        }
-        if (name in mapA && phone == mapA[name]) {
-            continue
         }
         if (name !in mapA) {
             book[name] = phone

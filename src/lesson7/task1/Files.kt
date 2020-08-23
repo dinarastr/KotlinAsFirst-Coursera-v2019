@@ -149,27 +149,26 @@ fun centerFile(inputName: String, outputName: String) {
 @ExperimentalStdlibApi
 fun alignFileByWidth(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    var maxLineLength = 0
-    var listOfLineLengths = mutableListOf<Int>()
+    val listOfLineLengths = mutableListOf<Int>()
     for (line in File(inputName).readLines()) {
-        var splitLine = line.trim().split(" ")
-        var lineJoined = splitLine.joinToString(" ")
+        val splitLine = line.trim().split(" ")
+        val lineJoined = splitLine.joinToString(" ")
         listOfLineLengths.add(lineJoined.length)
     }
-    maxLineLength = listOfLineLengths.max() ?: 0
+    val maxLineLength = listOfLineLengths.max() ?: 0
 
     for (line in File(inputName).readLines()) {
         if (line.isBlank()) {
             outputStream.newLine()
         }
-        var splitLine = line.trim().split(" ")
+        val splitLine = line.trim().split(" ")
         if (splitLine.size == 1) {
             outputStream.write(splitLine[0])
         } else {
-            var lastWord = splitLine.last()
-            var lineWithoutLast = splitLine.dropLast(1)
-            var spacesWeNeedToAdd = maxLineLength - numberOfCharsInList(splitLine)
-            var rawList = addSpace(lineWithoutLast, spacesWeNeedToAdd)
+            val lastWord = splitLine.last()
+            val lineWithoutLast = splitLine.dropLast(1)
+            val spacesWeNeedToAdd = maxLineLength - numberOfCharsInList(splitLine)
+            val rawList = addSpace(lineWithoutLast, spacesWeNeedToAdd)
             outputStream.newLine()
             outputStream.write((rawList + lastWord).joinToString(""))
         }
@@ -187,7 +186,7 @@ fun numberOfCharsInList(list: List<String>): Int {
 }
 
 fun addEqualSpaces(list: List<String>, numberSpaces: Int): List<String> {
-    var newList = mutableListOf<String>()
+    val newList = mutableListOf<String>()
     for (word in list) {
         var newWord = word
         for (i in 1..numberSpaces) {
@@ -199,15 +198,15 @@ fun addEqualSpaces(list: List<String>, numberSpaces: Int): List<String> {
 }
 
 fun addSpace(list: List<String>, spaces: Int): List<String> {
-    var newList = listOf<String>()
+    var newList: List<String>
     if (spaces % list.size == 0) {
-        var spaceForWord = spaces / list.size
+        val spaceForWord = spaces / list.size
         newList = addEqualSpaces(list, spaceForWord)
     } else {
-        var spaceForWord = spaces / list.size
-        var remainder = spaces % list.size
+        val spaceForWord = spaces / list.size
+        val remainder = spaces % list.size
         newList = addEqualSpaces(list, spaceForWord)
-        var middle = mutableListOf<String>()
+        val middle = mutableListOf<String>()
         var current = 0
         for (word in newList) {
             var newWord = word
